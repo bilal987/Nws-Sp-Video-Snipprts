@@ -1,0 +1,108 @@
+<!-- nws-testimonial -->
+{% assign ValIndex = 1 %}
+{% for block in section.blocks %}
+  {% assign ValIndex = ValIndex | plus: 1 %}
+{% endfor %}
+<div class="nws-testimonial{% if ValIndex > 3 %} nws-testimonial-slr{% endif %}" {% if section.settings.bg-img !=blank %}style="background-image: url({{ section.settings.bg-img | img_url: 'master' }})"{% endif %}>
+    <div class="container">
+      <div class="main-heading">
+         <h2>{{ section.settings.heading }}</h2>
+         <p>{{ section.settings.subheading }}</p>
+      </div>
+     </div> 
+  <div class="nws-testimonial-container-main{% unless ValIndex > 3 %} container{% endunless %}" >
+    <div class="nws-testimonial-container">
+      <div class="row testimonial-slides clearfix">
+       {% for block in section.blocks %}
+        <div class="col-md-6">
+          {% assign videoUrl = block.settings.video_url %}
+          {% assign videoImg = block.settings.video-img %}
+          {% render 'nws-sp-video', videoUrl: videoUrl, videoImg: videoImg %}
+         </div>
+        {% endfor %}
+       </div>
+      {% if section.settings.shop-link != blank %}
+        <div class="nws-orange-btn"><a href="{{ section.settings.shop-link }}">View More Testimonials</a></div>
+      {% endif %}
+    </div>
+  </div>
+</div>              
+<!-- end nws-testimonial -->
+
+{% schema %}
+{
+  "name": "NWS Testimonial",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "bg-img",
+      "label": "Add BG Image"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "url",
+      "id": "shop-link",
+      "label": "Shop Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial-video",
+      "name": "Testimonial Video",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "video-img",
+          "label": "Video Image"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video link",
+          "accept": [
+            "youtube",
+            "vimeo"
+          ]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NWS Testimonial",
+      "category": "NWS Testimonial"
+    }
+  ]
+}
+{% endschema %}
+
+{% if videoUrl.type == "youtube" %}{% assign video-url = "https://www.youtube.com/watch?v=" | append: videoUrl.id %}{% endif %}
+{% if videoUrl.type == "vimeo" %}{% assign video-url = "https://vimeo.com/" | append: videoUrl.id  %}{% endif %}
+<div class="nws-popup-video-img nws-popup-video-up" {% if videoUrl != blank %}href="{{video-url}}"{% endif %} >
+  {% if videoUrl != blank %}
+    <span class="nws-video-icon" >
+      <svg width="18" height="21" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.5 9.63398C18.1667 10.0189 18.1667 10.9811 17.5 11.366L1.75 20.4593C1.08333 20.8442 0.250001 20.3631 0.250001 19.5933L0.250002 1.40673C0.250002 0.636933 1.08334 0.155807 1.75 0.540708L17.5 9.63398Z" fill="white"/></path>
+      </svg> 
+    </span>
+  {% endif %}
+  {% if videoImg != blank %}
+      <img src="{{ videoImg | img_url: 'master' }}" width="auto" height="auto" loading="lazy"  />
+  {% else %}
+    {% if videoUrl.type == "youtube" %}
+      <img src="https://img.youtube.com/vi/{{ videoUrl.id }}/sddefault.jpg" width="auto" height="auto" loading="lazy" />
+    {% endif %}
+    {% if videoUrl.type == "vimeo" %}
+      <img src="https://vumbnail.com/{{ videoUrl.id }}.jpg" width="auto" height="auto" loading="lazy" />
+    {% endif %}
+  {% endif %}
+</div>
